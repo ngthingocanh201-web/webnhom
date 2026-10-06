@@ -1,0 +1,3530 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UniPlan | Quản lý bài tập nhóm</title>
+
+  <style>
+    :root {
+      --primary: #5b5ce2;
+      --primary-dark: #4849c5;
+      --primary-soft: #eef0ff;
+      --text: #25263a;
+      --muted: #85899f;
+      --border: #e8e9f1;
+      --background: #f7f8fc;
+      --white: #ffffff;
+      --green: #19a875;
+      --green-soft: #e8f8f1;
+      --yellow: #d59000;
+      --yellow-soft: #fff5d8;
+      --red: #df5361;
+      --red-soft: #fff0f2;
+      --blue: #3b79d0;
+      --blue-soft: #edf5ff;
+      --purple: #8759d7;
+      --purple-soft: #f1eafe;
+      --shadow: 0 10px 30px rgba(43, 48, 100, 0.07);
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      color: var(--text);
+      background: var(--background);
+      font-family: Inter, Arial, sans-serif;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+      border: 0;
+    }
+
+    .app {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      position: fixed;
+      inset: 0 auto 0 0;
+      z-index: 20;
+      width: 248px;
+      padding: 24px 16px;
+      background: var(--white);
+      border-right: 1px solid var(--border);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 12px 30px;
+      color: var(--primary);
+      font-size: 23px;
+      font-weight: 800;
+    }
+
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      color: white;
+      background: linear-gradient(135deg, #7678f1, #5052cf);
+      border-radius: 12px;
+      font-size: 22px;
+    }
+
+    .nav-label {
+      padding: 12px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      margin-bottom: 5px;
+      padding: 13px 12px;
+      color: #5e6277;
+      background: transparent;
+      border-radius: 11px;
+      text-align: left;
+      transition: 0.2s;
+    }
+
+    .nav-item:hover,
+    .nav-item.active {
+      color: var(--primary);
+      background: var(--primary-soft);
+      font-weight: 700;
+    }
+
+    .nav-icon {
+      width: 22px;
+      color: currentColor;
+      text-align: center;
+      font-size: 17px;
+    }
+
+    .sidebar-bottom {
+      position: absolute;
+      right: 16px;
+      bottom: 22px;
+      left: 16px;
+    }
+
+    .profile {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 15px 12px 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .avatar {
+      display: grid;
+      flex: 0 0 auto;
+      place-items: center;
+      width: 36px;
+      height: 36px;
+      color: white;
+      background: linear-gradient(135deg, #ff9d72, #ed6b91);
+      border-radius: 50%;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .profile-name {
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .profile-role {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    /* MAIN */
+    .main {
+      width: calc(100% - 248px);
+      min-height: 100vh;
+      margin-left: 248px;
+      padding: 30px 38px 60px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 28px;
+    }
+
+    .page-title {
+      margin-bottom: 7px;
+      font-size: 28px;
+      line-height: 1.2;
+    }
+
+    .page-subtitle {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .icon-btn {
+      position: relative;
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      color: #62667c;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      font-size: 17px;
+    }
+
+    .notification-dot {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 8px;
+      height: 8px;
+      background: var(--red);
+      border: 2px solid white;
+      border-radius: 50%;
+    }
+
+    .btn {
+      padding: 11px 16px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 800;
+      transition: 0.2s;
+    }
+
+    .btn-primary {
+      color: white;
+      background: var(--primary);
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+    }
+
+    .btn-soft {
+      color: var(--primary);
+      background: var(--primary-soft);
+    }
+
+    .btn-outline {
+      color: #5e6277;
+      background: white;
+      border: 1px solid var(--border);
+    }
+
+    .btn-danger {
+      color: var(--red);
+      background: var(--red-soft);
+    }
+
+    .btn-small {
+      padding: 8px 11px;
+      font-size: 12px;
+    }
+
+    /* CONTRIBUTION */
+    .contrib-row { display: grid; grid-template-columns: 190px 1fr 130px; align-items: center; gap: 16px; padding: 13px 0; border-top: 1px solid var(--border); }
+    .contrib-row:first-of-type { border-top: 0; }
+    .contrib-person { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 800; }
+    .contrib-person .avatar { width: 32px; height: 32px; }
+    .contrib-meta { margin-top: 6px; color: var(--muted); font-size: 12px; }
+    .progress-bar.contrib-bar-green { background: linear-gradient(90deg, #19a875, #5fd1a6); }
+    .progress-bar.contrib-bar-red { background: linear-gradient(90deg, #df5361, #f08a94); }
+    .contrib-flag { display: inline-block; margin-left: 6px; padding: 2px 8px; border-radius: 20px; font-size: 11px; font-weight: 800; }
+    .contrib-flag.warn { color: var(--yellow); background: var(--yellow-soft); }
+    .contrib-flag.bad { color: var(--red); background: var(--red-soft); }
+    .contrib-flag.ok { color: var(--green); background: var(--green-soft); }
+    @media (max-width: 760px) { .contrib-row { grid-template-columns: 1fr; gap: 8px; } }
+
+    #printArea { display: none; }
+    @media print {
+      .app, .modal-backdrop, #toast { display: none !important; }
+      #printArea { display: block !important; padding: 24px; font-family: Arial, sans-serif; color: #000; }
+      #printArea table { width: 100%; border-collapse: collapse; margin-top: 14px; }
+      #printArea td, #printArea th { border: 1px solid #999; padding: 8px; vertical-align: top; font-size: 12px; text-align: left; }
+      #printArea ul { margin-left: 16px; }
+    }
+
+    /* PAGES */
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    /* STAT CARDS */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+      margin-bottom: 22px;
+    }
+
+    .stat-card {
+      padding: 19px;
+      background: white;
+      border: 1px solid rgba(232, 233, 241, 0.7);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .stat-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .stat-icon {
+      display: grid;
+      place-items: center;
+      width: 35px;
+      height: 35px;
+      border-radius: 10px;
+      font-size: 16px;
+    }
+
+    .icon-purple {
+      color: var(--primary);
+      background: var(--primary-soft);
+    }
+
+    .icon-yellow {
+      color: var(--yellow);
+      background: var(--yellow-soft);
+    }
+
+    .icon-blue {
+      color: var(--blue);
+      background: var(--blue-soft);
+    }
+
+    .icon-green {
+      color: var(--green);
+      background: var(--green-soft);
+    }
+
+    .stat-value {
+      margin-bottom: 5px;
+      font-size: 27px;
+      font-weight: 900;
+    }
+
+    .stat-description {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    /* GENERAL CARDS */
+    .card {
+      padding: 22px;
+      background: white;
+      border: 1px solid rgba(232, 233, 241, 0.7);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 15px;
+      margin-bottom: 18px;
+    }
+
+    .card-title {
+      margin-bottom: 5px;
+      font-size: 18px;
+    }
+
+    .card-description {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: 20px;
+      margin-bottom: 22px;
+    }
+
+    /* TASKS */
+    .task-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .task-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      transition: 0.2s;
+    }
+
+    .task-item:hover {
+      background: #fcfcff;
+      border-color: #cbcdf6;
+    }
+
+    .task-check {
+      display: grid;
+      flex: 0 0 auto;
+      place-items: center;
+      width: 21px;
+      height: 21px;
+      color: white;
+      background: white;
+      border: 2px solid #cfd2de;
+      border-radius: 6px;
+      font-size: 12px;
+    }
+
+    .task-check.done {
+      background: var(--green);
+      border-color: var(--green);
+    }
+
+    .task-body {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .task-name {
+      overflow: hidden;
+      margin-bottom: 5px;
+      font-size: 14px;
+      font-weight: 800;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .task-name.done {
+      color: var(--muted);
+      text-decoration: line-through;
+    }
+
+    .task-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      padding: 5px 9px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .badge-gray {
+      color: #687086;
+      background: #f0f1f5;
+    }
+
+    .badge-blue {
+      color: var(--blue);
+      background: var(--blue-soft);
+    }
+
+    .badge-yellow {
+      color: var(--yellow);
+      background: var(--yellow-soft);
+    }
+
+    .badge-green {
+      color: var(--green);
+      background: var(--green-soft);
+    }
+
+    .badge-red {
+      color: var(--red);
+      background: var(--red-soft);
+    }
+
+    .badge-purple {
+      color: var(--purple);
+      background: var(--purple-soft);
+    }
+
+    .empty {
+      padding: 28px 10px;
+      color: var(--muted);
+      text-align: center;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    /* DEADLINES */
+    .deadline-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .deadline-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 13px;
+      background: #fafaff;
+      border-left: 4px solid var(--primary);
+      border-radius: 11px;
+    }
+
+    .deadline-name {
+      overflow: hidden;
+      margin-bottom: 5px;
+      font-size: 14px;
+      font-weight: 800;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .deadline-meta {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    /* GROUP CARDS */
+    .group-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .group-card {
+      padding: 19px;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      transition: 0.2s;
+    }
+
+    .group-card:hover {
+      border-color: #c7c9f5;
+      box-shadow: 0 9px 20px rgba(65, 66, 150, 0.08);
+      transform: translateY(-2px);
+    }
+
+    .group-card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 15px;
+    }
+
+    .group-name {
+      margin-bottom: 5px;
+      font-size: 17px;
+      font-weight: 900;
+    }
+
+    .group-description {
+      overflow: hidden;
+      color: var(--muted);
+      font-size: 12px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .group-progress-line {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 7px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .group-progress-line strong {
+      color: var(--text);
+    }
+
+    .progress {
+      width: 100%;
+      height: 8px;
+      overflow: hidden;
+      background: #edf0f5;
+      border-radius: 30px;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #5b5ce2, #888af5);
+      border-radius: inherit;
+      transition: width 0.3s;
+    }
+
+    .group-card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 17px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+    }
+
+    .group-info {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .members {
+      display: flex;
+      align-items: center;
+    }
+
+    .member {
+      display: grid;
+      place-items: center;
+      width: 27px;
+      height: 27px;
+      margin-left: -5px;
+      color: white;
+      border: 2px solid white;
+      border-radius: 50%;
+      font-size: 9px;
+      font-weight: 800;
+    }
+
+    .member:first-child {
+      margin-left: 0;
+    }
+
+    /* CALENDAR */
+    .calendar-card {
+      margin-bottom: 22px;
+    }
+
+    .calendar-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .calendar-toolbar strong {
+      min-width: 120px;
+      font-size: 13px;
+      text-align: center;
+      text-transform: capitalize;
+    }
+
+    .calendar-table {
+      width: 100%;
+      margin-top: 10px;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+
+    .calendar-table th {
+      padding: 10px 5px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+      text-align: center;
+    }
+
+    .calendar-table td {
+      height: 82px;
+      padding: 7px;
+      vertical-align: top;
+      border: 1px solid var(--border);
+      font-size: 12px;
+    }
+
+    .calendar-day {
+      display: inline-grid;
+      place-items: center;
+      width: 25px;
+      height: 25px;
+      margin-bottom: 4px;
+      border-radius: 50%;
+    }
+
+    .calendar-day.today {
+      color: white;
+      background: var(--primary);
+      font-weight: 800;
+    }
+
+    .calendar-event {
+      overflow: hidden;
+      margin-top: 3px;
+      padding: 4px 5px;
+      color: var(--primary);
+      background: var(--primary-soft);
+      border-radius: 4px;
+      font-size: 10px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* DETAIL PAGE */
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 17px;
+      color: var(--primary);
+      background: transparent;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .detail-heading {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .detail-title {
+      margin-bottom: 6px;
+      font-size: 25px;
+    }
+
+    .detail-subtitle {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .detail-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .mini-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .mini-stat {
+      padding: 15px;
+      background: #fafaff;
+      border: 1px solid var(--border);
+      border-radius: 13px;
+    }
+
+    .mini-stat-label {
+      margin-bottom: 7px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .mini-stat-value {
+      font-size: 21px;
+      font-weight: 900;
+    }
+
+    .filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 15px;
+    }
+
+    .filter-btn {
+      padding: 8px 12px;
+      color: var(--muted);
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .filter-btn.active {
+      color: var(--primary);
+      background: var(--primary-soft);
+      border-color: transparent;
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+    }
+
+    .task-table {
+      width: 100%;
+      min-width: 760px;
+      border-collapse: collapse;
+    }
+
+    .task-table th,
+    .task-table td {
+      padding: 12px 10px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      font-size: 12px;
+    }
+
+    .task-table th {
+      color: var(--muted);
+      background: #fafaff;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .task-table input,
+    .task-table select {
+      width: 100%;
+      min-width: 100px;
+      padding: 8px;
+      color: var(--text);
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      outline: none;
+      font-size: 12px;
+    }
+
+    .task-table input:focus,
+    .task-table select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(91, 92, 226, 0.09);
+    }
+
+    .resource-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .resource-card {
+      padding: 19px;
+      border: 1px solid var(--border);
+      border-radius: 15px;
+    }
+
+    .resource-title {
+      margin-bottom: 6px;
+      font-size: 16px;
+    }
+
+    .resource-description {
+      margin-bottom: 14px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .link-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 13px;
+    }
+
+    .resource-link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px;
+      color: var(--primary);
+      background: var(--primary-soft);
+      border-radius: 9px;
+      font-size: 12px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .resource-link span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .submit-box {
+      padding: 14px;
+      background: #fafaff;
+      border-radius: 12px;
+    }
+
+    .submit-status {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+      font-size: 12px;
+    }
+
+    .submit-input {
+      display: flex;
+      gap: 7px;
+    }
+
+    .submit-input input {
+      min-width: 0;
+      flex: 1;
+    }
+
+    /* TEACHER VIEW */
+    .teacher-banner {
+      display: flex;
+      align-items: flex-start;
+      gap: 13px;
+      margin-bottom: 20px;
+      padding: 17px;
+      color: #4b4d9c;
+      background: var(--primary-soft);
+      border-radius: 14px;
+    }
+
+    .teacher-banner-icon {
+      display: grid;
+      flex: 0 0 auto;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      color: white;
+      background: var(--primary);
+      border-radius: 10px;
+    }
+
+    .teacher-banner-title {
+      margin-bottom: 4px;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .teacher-banner-text {
+      color: #7375b3;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    /* MODAL */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 60;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: rgba(27, 31, 65, 0.48);
+    }
+
+    .modal-backdrop.show {
+      display: flex;
+    }
+
+    .modal {
+      width: min(590px, 100%);
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 24px;
+      background: white;
+      border-radius: 18px;
+      box-shadow: 0 20px 70px rgba(15, 20, 70, 0.22);
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .modal-title {
+      font-size: 20px;
+    }
+
+    .close-btn {
+      display: grid;
+      place-items: center;
+      width: 32px;
+      height: 32px;
+      color: var(--muted);
+      background: #f3f4f8;
+      border-radius: 8px;
+      font-size: 18px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-group.full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 7px;
+      color: #656a7d;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 11px 12px;
+      color: var(--text);
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      outline: none;
+      font-size: 13px;
+    }
+
+    textarea {
+      min-height: 85px;
+      resize: vertical;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(91, 92, 226, 0.1);
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 9px;
+      margin-top: 18px;
+    }
+
+    /* TOAST */
+    .toast {
+      position: fixed;
+      right: 25px;
+      bottom: 25px;
+      z-index: 100;
+      display: none;
+      max-width: 350px;
+      padding: 14px 18px;
+      color: white;
+      background: #2b2e4d;
+      border-radius: 11px;
+      box-shadow: var(--shadow);
+      font-size: 13px;
+    }
+
+    .toast.show {
+      display: block;
+      animation: appear 0.25s ease;
+    }
+
+    @keyframes appear {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 1100px) {
+      .stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .content-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .group-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 780px) {
+      .sidebar {
+        width: 72px;
+        padding: 18px 10px;
+      }
+
+      .brand {
+        justify-content: center;
+        padding: 0 0 25px;
+      }
+
+      .brand-name,
+      .nav-label,
+      .nav-text,
+      .profile-info {
+        display: none;
+      }
+
+      .nav-item {
+        justify-content: center;
+        padding: 13px 5px;
+      }
+
+      .sidebar-bottom {
+        right: 10px;
+        left: 10px;
+      }
+
+      .profile {
+        justify-content: center;
+        padding: 12px 0 0;
+      }
+
+      .main {
+        width: calc(100% - 72px);
+        margin-left: 72px;
+        padding: 22px 16px 45px;
+      }
+
+      .topbar {
+        align-items: flex-start;
+      }
+
+      .top-actions .btn {
+        display: none;
+      }
+
+      .detail-heading {
+        flex-direction: column;
+      }
+
+      .mini-stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .resource-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .calendar-table {
+        min-width: 650px;
+      }
+
+      .calendar-card {
+        overflow-x: auto;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .page-title {
+        font-size: 22px;
+      }
+
+      .stats {
+        gap: 9px;
+      }
+
+      .stat-card {
+        padding: 14px;
+      }
+
+      .stat-value {
+        font-size: 22px;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .form-group.full {
+        grid-column: auto;
+      }
+
+      .submit-input {
+        flex-direction: column;
+      }
+    }
+    .account-switch-btn {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  margin-left: auto;
+  color: var(--primary);
+  background: var(--primary-soft);
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.account-switch-btn:hover {
+  color: white;
+  background: var(--primary);
+}
+
+.account-menu {
+  position: fixed;
+  right: 25px;
+  bottom: 78px;
+  z-index: 70;
+  display: none;
+  width: 285px;
+  padding: 10px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: 0 15px 40px rgba(43, 48, 100, 0.16);
+}
+
+.account-menu.show {
+  display: block;
+}
+
+.account-menu-title {
+  padding: 8px 10px 10px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.account-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 11px 10px;
+  background: white;
+  border-radius: 10px;
+  text-align: left;
+}
+
+.account-option:hover,
+.account-option.active {
+  background: var(--primary-soft);
+}
+
+.account-option-avatar {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 33px;
+  height: 33px;
+  color: white;
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.account-option-info {
+  min-width: 0;
+  flex: 1;
+}
+
+.account-option-name {
+  overflow: hidden;
+  margin-bottom: 3px;
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.account-option-email {
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.account-role-badge {
+  padding: 4px 7px;
+  color: var(--primary);
+  background: var(--primary-soft);
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.role-banner {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 18px;
+  padding: 11px 14px;
+  color: #4d4fa0;
+  background: var(--primary-soft);
+  border-radius: 10px;
+  font-size: 12px;
+}
+
+.role-banner strong {
+  font-weight: 800;
+}
+
+.leader-only {
+  display: block;
+}
+
+.member-only {
+  display: block;
+}
+
+.hidden-by-role {
+  display: none !important;
+}
+
+@media (max-width: 780px) {
+  .account-switch-btn {
+    display: none;
+  }
+
+  .account-menu {
+    right: 15px;
+    bottom: 70px;
+  }
+}
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">U</div>
+        <span class="brand-name">UniPlan</span>
+      </div>
+
+      <div class="nav-label">Không gian làm việc</div>
+
+      <button class="nav-item active" data-page="dashboard">
+        <span class="nav-icon">⌂</span>
+        <span class="nav-text">Tổng quan</span>
+      </button>
+
+      <button class="nav-item" data-page="personal">
+        <span class="nav-icon">✓</span>
+        <span class="nav-text">Việc của tôi</span>
+      </button>
+
+      <button class="nav-item" data-page="groups">
+        <span class="nav-icon">▣</span>
+        <span class="nav-text">Nhóm của tôi</span>
+      </button>
+
+      <button class="nav-item" data-page="calendar">
+        <span class="nav-icon">▦</span>
+        <span class="nav-text">Lịch</span>
+      </button>
+
+      <div class="sidebar-bottom">
+        <div class="profile">
+  <div class="avatar" id="currentAvatar">NA</div>
+
+  <div class="profile-info">
+    <div class="profile-name" id="currentUserName">Ngọc Ánh</div>
+    <div class="profile-role" id="currentUserRole">Thành viên</div>
+  </div>
+
+  <button
+    class="account-switch-btn"
+    id="accountSwitchButton"
+    title="Chuyển tài khoản"
+  >
+    ↕
+  </button>
+</div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <h1 class="page-title" id="pageTitle">
+            Chào Ngọc Ánh, hôm nay bạn cần làm gì?
+          </h1>
+          <p class="page-subtitle" id="pageSubtitle">
+            Theo dõi việc cá nhân và công việc nhóm ở một nơi.
+          </p>
+        </div>
+
+        <div class="top-actions">
+          <button class="btn btn-outline btn-small" onclick="joinGroupByCode()">Nhập mã nhóm</button>
+          <button class="btn btn-outline btn-small" onclick="exportICS()">Xuất lịch (.ics)</button>
+          <button class="icon-btn" id="notificationButton" title="Thông báo">
+            ♧
+            <span class="notification-dot"></span>
+          </button>
+
+          <button class="btn btn-primary" id="quickAddButton">
+            + Thêm deadline
+          </button>
+        </div>
+      </header>
+
+      <!-- DASHBOARD -->
+      <section class="page active" id="dashboardPage">
+        <div class="role-banner" id="roleBanner">
+  <span>●</span>
+  <span id="roleBannerText">
+    Bạn đang xem UniPlan với tư cách Nhóm trưởng.
+  </span>
+</div>
+        <div class="stats">
+          <div class="stat-card">
+            <div class="stat-top">
+              <span>Việc hôm nay</span>
+              <span class="stat-icon icon-purple">✓</span>
+            </div>
+            <div class="stat-value" id="todayCount">0</div>
+            <div class="stat-description">Task cần hoàn thành hôm nay</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-top">
+              <span>Sắp đến hạn</span>
+              <span class="stat-icon icon-yellow">◷</span>
+            </div>
+            <div class="stat-value" id="soonCount">0</div>
+            <div class="stat-description">Trong vòng 3 ngày tới</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-top">
+              <span>Đang làm</span>
+              <span class="stat-icon icon-blue">↗</span>
+            </div>
+            <div class="stat-value" id="doingCount">0</div>
+            <div class="stat-description">Task đang được thực hiện</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-top">
+              <span>Nhóm đang tham gia</span>
+              <span class="stat-icon icon-green">♙</span>
+            </div>
+            <div class="stat-value" id="groupCount">0</div>
+            <div class="stat-description">Dự án đang hoạt động</div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom: 22px;" id="weekCard"></div>
+
+        <div class="content-grid">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h2 class="card-title">Việc của tôi hôm nay</h2>
+                <p class="card-description">
+                  Các công việc cá nhân và task được giao từ nhóm.
+                </p>
+              </div>
+
+              <button class="btn btn-soft btn-small" onclick="switchPage('personal')">
+                Xem tất cả
+              </button>
+            </div>
+
+            <div class="task-list" id="todayTaskList"></div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h2 class="card-title">Sắp đến hạn</h2>
+                <p class="card-description">
+                  Ưu tiên các công việc gần deadline.
+                </p>
+              </div>
+            </div>
+
+            <div class="deadline-list" id="upcomingDeadlineList"></div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom: 22px;">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">Tiến độ các nhóm</h2>
+              <p class="card-description">
+                Xem nhanh tình hình các nhóm bạn đang tham gia.
+              </p>
+            </div>
+
+            <button class="btn btn-soft btn-small" onclick="switchPage('groups')">
+              Xem tất cả nhóm
+            </button>
+          </div>
+
+          <div class="group-grid" id="dashboardGroupGrid"></div>
+        </div>
+
+        <div class="card calendar-card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">Lịch của tôi</h2>
+              <p class="card-description">
+                Deadline và task được sắp xếp theo ngày.
+              </p>
+            </div>
+
+            <div class="calendar-toolbar">
+              <button class="btn btn-outline btn-small" id="previousMonth">‹</button>
+              <strong id="calendarMonth"></strong>
+              <button class="btn btn-outline btn-small" id="nextMonth">›</button>
+            </div>
+          </div>
+
+          <div id="calendarContainer"></div>
+        </div>
+      </section>
+
+      <!-- PERSONAL -->
+      <section class="page" id="personalPage">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">Việc của tôi</h2>
+              <p class="card-description">
+                Tất cả task cá nhân và task được giao từ các nhóm.
+              </p>
+            </div>
+
+            <button class="btn btn-primary" onclick="openDeadlineModal()">
+              + Thêm deadline
+            </button>
+          </div>
+
+          <div class="filter-row" id="personalFilter">
+            <button class="filter-btn active" data-filter="all">Tất cả</button>
+            <button class="filter-btn" data-filter="todo">Chưa làm</button>
+            <button class="filter-btn" data-filter="doing">Đang làm</button>
+            <button class="filter-btn" data-filter="done">Hoàn thành</button>
+            <button class="filter-btn" data-filter="overdue">Quá hạn</button>
+          </div>
+
+          <div class="task-list" id="personalTaskList"></div>
+        </div>
+      </section>
+
+      <!-- GROUPS -->
+      <section class="page" id="groupsPage">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">Nhóm của tôi</h2>
+              <p class="card-description">
+                Chọn một nhóm để xem bảng công việc, tài liệu và bài nộp.
+              </p>
+            </div>
+
+            <button class="btn btn-primary" onclick="openGroupModal()">
+              + Tạo nhóm
+            </button>
+          </div>
+
+          <div class="group-grid" id="groupGrid"></div>
+        </div>
+      </section>
+
+      <!-- GROUP DETAIL -->
+      <section class="page" id="groupDetailPage">
+        <button class="back-link" onclick="switchPage('groups')">
+          ← Quay lại các nhóm
+        </button>
+
+        <div id="groupDetailContent"></div>
+      </section>
+
+      <!-- CALENDAR -->
+      <section class="page" id="calendarPage">
+        <div class="card calendar-card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">Lịch của tôi</h2>
+              <p class="card-description">
+                Tất cả deadline và task trong một lịch.
+              </p>
+            </div>
+
+            <div class="calendar-toolbar">
+              <button class="btn btn-outline btn-small" id="previousMonth2">‹</button>
+              <strong id="calendarMonth2"></strong>
+              <button class="btn btn-outline btn-small" id="nextMonth2">›</button>
+            </div>
+          </div>
+
+          <div id="calendarContainer2"></div>
+        </div>
+      </section>
+
+      <!-- TEACHER VIEW -->
+      <section class="page" id="teacherPage">
+        <div class="teacher-banner">
+          <div class="teacher-banner-icon">◉</div>
+          <div>
+            <div class="teacher-banner-title">Teacher View</div>
+            <div class="teacher-banner-text">
+              Chế độ xem tiến độ dành cho giảng viên. Không cần chỉnh sửa hoặc sử dụng toàn bộ hệ thống.
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">Tiến độ các nhóm</h2>
+              <p class="card-description">
+                Tổng quan dự án và link bài nộp cuối cùng.
+              </p>
+            </div>
+          </div>
+
+          <div class="group-grid" id="teacherGroupGrid"></div>
+        </div>
+        <div id="teacherContrib"></div>
+      </section>
+    </main>
+  </div>
+
+  <!-- DEADLINE MODAL -->
+  <div class="modal-backdrop" id="deadlineModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title">Thêm deadline</h2>
+        <button class="close-btn" onclick="closeModal('deadlineModal')">×</button>
+      </div>
+
+      <form id="deadlineForm">
+        <div class="form-grid">
+          <div class="form-group full">
+            <label for="deadlineName">Tên bài / công việc</label>
+            <input
+              id="deadlineName"
+              required
+              placeholder="Ví dụ: Hoàn thiện báo cáo marketing"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="deadlineType">Loại bài</label>
+            <select id="deadlineType">
+              <option>Báo cáo</option>
+              <option>Thuyết trình</option>
+              <option>Bài tập</option>
+              <option>Dự án</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="deadlineLevel">Mức độ</label>
+            <select id="deadlineLevel">
+              <option>Dễ</option>
+              <option selected>Vừa</option>
+              <option>Khó</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="deadlineDate">Deadline</label>
+            <input id="deadlineDate" type="date" required />
+          </div>
+
+          <div class="form-group">
+            <label for="deadlineHours">Ước tính số giờ</label>
+            <input id="deadlineHours" type="number" min="1" value="4" required />
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn btn-outline" onclick="closeModal('deadlineModal')">
+            Hủy
+          </button>
+          <button class="btn btn-primary">Lưu deadline</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- GROUP MODAL -->
+  <div class="modal-backdrop" id="groupModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title">Tạo nhóm mới</h2>
+        <button class="close-btn" onclick="closeModal('groupModal')">×</button>
+      </div>
+
+      <form id="groupForm">
+        <div class="form-group">
+          <label for="groupName">Tên nhóm</label>
+          <input id="groupName" required placeholder="Ví dụ: Nhóm Marketing 02" />
+        </div>
+
+        <div class="form-group">
+          <label for="groupProject">Tên bài / dự án</label>
+          <input id="groupProject" required placeholder="Ví dụ: Báo cáo cuối kỳ" />
+        </div>
+
+        <div class="form-group">
+          <label for="groupDescription">Mô tả</label>
+          <textarea id="groupDescription" placeholder="Mô tả ngắn về bài nhóm"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="groupDeadline">Deadline chung</label>
+          <input id="groupDeadline" type="date" required />
+        </div>
+
+        <div class="form-group">
+          <label for="groupTemplate">Mẫu công việc (tự tạo sẵn các việc cần làm)</label>
+          <select id="groupTemplate">
+            <option value="">Không dùng mẫu</option>
+            <option value="Báo cáo">Báo cáo</option>
+            <option value="Thuyết trình">Thuyết trình</option>
+            <option value="Dự án">Dự án</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="groupMembers">Thành viên</label>
+          <input id="groupMembers" placeholder="Minh, Lan, Tuấn" />
+          <small style="display: block; margin-top: 6px; color: var(--muted);">
+            Nhập tên, cách nhau bằng dấu phẩy.
+          </small>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn btn-outline" onclick="closeModal('groupModal')">
+            Hủy
+          </button>
+          <button class="btn btn-primary">Tạo nhóm</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- TASK MODAL -->
+  <div class="modal-backdrop" id="taskModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title">Giao việc cho thành viên</h2>
+        <button class="close-btn" onclick="closeModal('taskModal')">×</button>
+      </div>
+
+      <form id="taskForm">
+        <input type="hidden" id="taskGroupId" />
+
+        <div class="form-group">
+          <label for="taskName">Tên công việc</label>
+          <input id="taskName" required placeholder="Ví dụ: Tìm tài liệu tham khảo" />
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+           <label for="taskAssignee">Ai thực hiện?</label>
+            <select id="taskAssignee" required></select>
+          </div>
+
+          <div class="form-group">
+           <label for="taskDate">Hạn hoàn thành</label>
+            <input id="taskDate" type="date" required />
+          </div>
+
+          <div class="form-group">
+            <label for="taskLink">Link tài liệu</label>
+            <input id="taskLink" type="url" placeholder="https://docs.google.com/..." />
+          </div>
+
+          <div class="form-group">
+            <label for="taskPriority">Mức độ ưu tiên</label>
+            <select id="taskPriority">
+              <option>Thấp</option>
+              <option selected>Vừa</option>
+              <option>Cao</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn btn-outline" onclick="closeModal('taskModal')">
+            Hủy
+          </button>
+          <button class="btn btn-primary">Giao việc</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const STORAGE_KEY = "uniplan_improved_demo_v1";
+    let CURRENT_USER = "Ngọc Ánh";
+
+let currentAccount = {
+  id: "leader",
+  name: "Ngọc Ánh",
+  email: "ngocanh.leader@uniplan.demo",
+  role: "leader",
+  roleName: "Nhóm trưởng",
+  initials: "NA",
+  color: "#5b5ce2"
+};
+
+const ACCOUNTS = {
+  leader: {
+    id: "leader",
+    name: "Ngọc Ánh",
+    email: "ngocanh.leader@uniplan.demo",
+    role: "leader",
+    roleName: "Nhóm trưởng",
+    initials: "NA",
+    color: "#5b5ce2"
+  },
+
+  member: {
+    id: "member",
+    name: "Phương",
+    email: "phuong.member@uniplan.demo",
+    role: "member",
+    roleName: "Thành viên",
+    initials: "PH",
+    color: "#e87861"
+  }
+};
+
+    let activePage = "dashboard";
+    let activeGroupId = null;
+    let personalFilter = "all";
+    let calendarDate = new Date();
+
+    const defaultData = {
+      deadlines: [
+        {
+          id: "d1",
+          name: "Hoàn thiện báo cáo marketing",
+          type: "Báo cáo",
+          level: "Khó",
+          date: "2026-10-08",
+          hours: 6
+        }
+      ],
+      personalTasks: [
+        {
+          id: "pt1",
+          name: "Đọc yêu cầu bài và xác định nội dung",
+          date: "2026-10-05",
+          status: "doing",
+          completed: false,
+          groupName: "Cá nhân"
+        },
+        {
+          id: "pt2",
+          name: "Kiểm tra trích dẫn trong báo cáo",
+          date: "2026-10-09",
+          status: "todo",
+          completed: false,
+          groupName: "Cá nhân"
+        }
+      ],
+      groups: [
+        {
+          id: "g1",
+          name: "Nhóm Marketing 01",
+          project: "Thuyết trình giữa kỳ",
+          description: "Phân tích hành vi người tiêu dùng",
+          deadline: "2026-10-08",
+          members: ["Ngọc Ánh", "Đạt", "Đức", "Lan", "Huy"],
+          materials: [
+            {
+              name: "Google Docs - Nội dung báo cáo",
+              url: "https://docs.google.com/"
+            },
+            {
+              name: "Canva - Thiết kế slide",
+              url: "https://www.canva.com/"
+            }
+          ],
+          submissionUrl: "",
+          tasks: [
+            {
+              id: "g1t1",
+              name: "Tìm tài liệu tham khảo",
+              assignee: "Ngọc Ánh",
+              date: "2026-10-05",
+              status: "doing",
+              completed: false,
+              link: "https://scholar.google.com/",
+              priority: "Cao"
+            },
+            {
+              id: "g1t2",
+              name: "Viết phần phân tích thị trường",
+              assignee: "Phương",
+              date: "2026-10-06",
+              status: "done",
+              completed: true,
+              link: "https://docs.google.com/",
+              priority: "Cao"
+            },
+            {
+              id: "g1t3",
+              name: "Thiết kế slide",
+              assignee: "Lan",
+              date: "2026-10-07",
+              status: "todo",
+              completed: false,
+              link: "https://www.canva.com/",
+              priority: "Vừa"
+            },
+            {
+              id: "g1t4",
+              name: "Luyện tập thuyết trình",
+              assignee: "Cả nhóm",
+              date: "2026-10-08",
+              status: "todo",
+              completed: false,
+              link: "",
+              priority: "Cao"
+            }
+          ]
+        },
+        {
+          id: "g2",
+          name: "Nhóm Khởi nghiệp số",
+          project: "Dự án cuối kỳ",
+          description: "Xây dựng ý tưởng sản phẩm số",
+          deadline: "2026-10-20",
+          members: ["Ngọc Ánh", "Đạt", "Nhi", "An"],
+          materials: [
+            {
+              name: "Google Drive - Tài liệu nhóm",
+              url: "https://drive.google.com/"
+            }
+          ],
+          submissionUrl: "",
+          tasks: [
+            {
+              id: "g2t1",
+              name: "Xác định vấn đề khách hàng",
+              assignee: "Đạt",
+              date: "2026-10-08",
+              status: "done",
+              completed: true,
+              link: "",
+              priority: "Cao"
+            },
+            {
+              id: "g2t2",
+              name: "Phân tích đối thủ",
+              assignee: "Ngọc Ánh",
+              date: "2026-10-12",
+              status: "todo",
+              completed: false,
+              link: "https://docs.google.com/",
+              priority: "Vừa"
+            },
+            {
+              id: "g2t3",
+              name: "Thiết kế prototype",
+              assignee: "Nhi",
+              date: "2026-10-16",
+              status: "todo",
+              completed: false,
+              link: "",
+              priority: "Cao"
+            }
+          ]
+        }
+      ]
+    };
+
+    let data = loadData();
+
+    function loadData() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+
+      if (saved) {
+        return JSON.parse(saved);
+      }
+
+      const copy = JSON.parse(JSON.stringify(defaultData));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(copy));
+      return copy;
+    }
+
+    function saveData() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
+
+    function uid(prefix = "id") {
+      return `${prefix}-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    }
+
+    function escapeHTML(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function localDateString(date = new Date()) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+
+      return `${year}-${month}-${day}`;
+    }
+
+    function formatDate(dateString) {
+      if (!dateString) return "Chưa có ngày";
+
+      return new Date(`${dateString}T00:00:00`).toLocaleDateString("vi-VN", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric"
+      });
+    }
+
+    function daysUntil(dateString) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const date = new Date(`${dateString}T00:00:00`);
+      date.setHours(0, 0, 0, 0);
+
+      return Math.ceil((date - today) / 86400000);
+    }
+
+    function statusLabel(task) {
+      if (task.completed || task.status === "done") return "Hoàn thành";
+      if (task.status === "doing") return "Đang làm";
+      if (task.status === "help") return "Cần hỗ trợ";
+      if (daysUntil(task.date) < 0) return "Quá hạn";
+      return "Chưa làm";
+    }
+
+    function statusClass(task) {
+      if (task.completed || task.status === "done") return "badge-green";
+      if (task.status === "doing") return "badge-yellow";
+      if (task.status === "help") return "badge-purple";
+      if (daysUntil(task.date) < 0) return "badge-red";
+      return "badge-gray";
+    }
+
+    function statusValue(task) {
+      if (task.completed || task.status === "done") return "done";
+      return task.status || "todo";
+    }
+
+    function avatarColor(index) {
+      const colors = ["#6b63cf", "#e87861", "#36a687", "#d28d3e", "#7090d1", "#8b5fca"];
+      return colors[index % colors.length];
+    }
+
+    function initials(name) {
+      return name
+        .split(" ")
+        .map(part => part[0])
+        .join("")
+        .slice(0, 2)
+        .toUpperCase();
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.classList.add("show");
+
+      clearTimeout(window.toastTimer);
+      window.toastTimer = setTimeout(() => {
+        toast.classList.remove("show");
+      }, 2800);
+    }
+
+    function openModal(id) {
+      document.getElementById(id).classList.add("show");
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove("show");
+    }
+
+    function allTasks() {
+  const personal = data.personalTasks.map(task => ({
+    ...task,
+    source: "personal",
+    groupId: null,
+    groupName: task.groupName || "Cá nhân"
+  }));
+
+  let groupTasks = data.groups.flatMap(group =>
+    group.tasks.map(task => ({
+      ...task,
+      source: "group",
+      groupId: group.id,
+      groupName: group.name
+    }))
+  );
+
+  if (currentAccount.role === "member") {
+    groupTasks = groupTasks.filter(task => {
+      return task.assignee === currentAccount.name ||
+        task.assignee === "Cả nhóm";
+    });
+  }
+
+  return [...personal, ...groupTasks];
+}
+
+    function groupProgress(group) {
+      if (!group.tasks.length) return 0;
+
+      const completed = group.tasks.filter(task => task.completed || task.status === "done").length;
+      return Math.round((completed / group.tasks.length) * 100);
+    }
+
+    function renderStats() {
+      const tasks = allTasks();
+      const today = localDateString();
+
+      const todayTasks = tasks.filter(task => !task.completed && task.date === today);
+      const soonTasks = tasks.filter(task => {
+        const days = daysUntil(task.date);
+        return !task.completed && days >= 0 && days <= 3;
+      });
+      const doingTasks = tasks.filter(task => !task.completed && task.status === "doing");
+
+      document.getElementById("todayCount").textContent = todayTasks.length;
+      document.getElementById("soonCount").textContent = soonTasks.length;
+      document.getElementById("doingCount").textContent = doingTasks.length;
+      document.getElementById("groupCount").textContent = data.groups.length;
+    }
+
+    function taskItemHTML(task) {
+      return `
+        <div class="task-item">
+          <button
+            class="task-check ${task.completed || task.status === "done" ? "done" : ""}"
+            onclick="toggleTask('${task.id}', '${task.source}', '${task.groupId || ""}')"
+            title="Cập nhật trạng thái"
+          >
+            ${task.completed || task.status === "done" ? "✓" : ""}
+          </button>
+
+          <div class="task-body">
+            <div class="task-name ${task.completed || task.status === "done" ? "done" : ""}">
+              ${escapeHTML(task.name)}
+            </div>
+
+            <div class="task-meta">
+              <span>${escapeHTML(task.groupName)}</span>
+<span>${currentAccount.role === "leader" ? "Chế độ nhóm trưởng" : "Việc được giao cho bạn"}</span>
+              <span>Hạn: ${formatDate(task.date)}</span>
+              ${task.assignee ? `<span>Phụ trách: ${escapeHTML(task.assignee)}</span>` : ""}
+            </div>
+          </div>
+
+          <span class="badge ${statusClass(task)}">${statusLabel(task)}</span>
+        </div>
+      `;
+    }
+
+    function renderTodayTasks() {
+      const container = document.getElementById("todayTaskList");
+      const today = localDateString();
+
+      let tasks = allTasks()
+        .filter(task => !task.completed && (task.date === today || daysUntil(task.date) < 0))
+        .sort((a, b) => a.date.localeCompare(b.date));
+
+      if (!tasks.length) {
+        tasks = allTasks()
+          .filter(task => !task.completed)
+          .sort((a, b) => a.date.localeCompare(b.date))
+          .slice(0, 4);
+      }
+
+      if (!tasks.length) {
+        container.innerHTML = `
+          <div class="empty">
+            Bạn chưa có việc cần làm.<br />
+            Hãy thêm deadline hoặc mở một nhóm để bắt đầu.
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = tasks.slice(0, 5).map(taskItemHTML).join("");
+    }
+
+    function renderUpcomingDeadlines() {
+      const container = document.getElementById("upcomingDeadlineList");
+
+      const deadlines = [...data.deadlines]
+        .sort((a, b) => a.date.localeCompare(b.date))
+        .slice(0, 5);
+
+      if (!deadlines.length) {
+        container.innerHTML = `<div class="empty">Chưa có deadline nào.</div>`;
+        return;
+      }
+
+      container.innerHTML = deadlines.map(deadline => {
+        const days = daysUntil(deadline.date);
+        const badgeClass = days < 0 ? "badge-red" : days <= 2 ? "badge-yellow" : "badge-blue";
+        const label = days < 0 ? "Quá hạn" : days === 0 ? "Hôm nay" : `Còn ${days} ngày`;
+
+        return `
+          <div class="deadline-item">
+            <div>
+              <div class="deadline-name">${escapeHTML(deadline.name)}</div>
+              <div class="deadline-meta">
+                ${escapeHTML(deadline.type)} · ${formatDate(deadline.date)}
+              </div>
+            </div>
+            <span class="badge ${badgeClass}">${label}</span>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function groupCardHTML(group, teacherMode = false) {
+      const progress = groupProgress(group);
+      const unfinished = group.tasks.filter(task => !task.completed && task.status !== "done").length;
+      const overdue = group.tasks.filter(task => !task.completed && daysUntil(task.date) < 0).length;
+
+      return `
+        <div class="group-card">
+          <div class="group-card-top">
+            <div style="min-width: 0;">
+              <div class="group-name">${escapeHTML(group.name)}</div>
+              <div class="group-description">
+                ${escapeHTML(group.project)} · ${escapeHTML(group.description || "Chưa có mô tả")}
+              </div>
+            </div>
+
+            <span class="badge ${overdue ? "badge-red" : progress >= 60 ? "badge-green" : "badge-yellow"}">
+              ${overdue ? "Cần chú ý" : progress >= 60 ? "Ổn định" : "Đang thực hiện"}
+            </span>
+          </div>
+
+          <div class="group-progress-line">
+            <span>Tiến độ nhóm</span>
+            <strong>${progress}%</strong>
+          </div>
+
+          <div class="progress">
+            <div class="progress-bar" style="width: ${progress}%"></div>
+          </div>
+
+          <div class="group-card-footer">
+            <div>
+              <div class="group-info">
+                <span>${group.members.length} thành viên</span>
+                <span>·</span>
+                <span>${unfinished} việc còn lại</span>
+              </div>
+              <div class="group-info" style="margin-top: 6px;">
+                Hạn gần nhất: ${formatDate(group.deadline)}
+              </div>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 9px;">
+              <div class="members">
+                ${group.members.slice(0, 5).map((member, index) => `
+                  <div
+                    class="member"
+                    style="background: ${avatarColor(index)}"
+                    title="${escapeHTML(member)}"
+                  >
+                    ${escapeHTML(initials(member))}
+                  </div>
+                `).join("")}
+              </div>
+
+              ${
+                teacherMode
+                  ? `<button class="btn btn-soft btn-small" onclick="openGroupDetail('${group.id}', true)">Xem</button>`
+                  : `<button class="btn btn-soft btn-small" onclick="openGroupDetail('${group.id}')">Xem nhóm</button>`
+              }
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderGroupCards() {
+      const groupGrid = document.getElementById("groupGrid");
+      const dashboardGrid = document.getElementById("dashboardGroupGrid");
+      const teacherGrid = document.getElementById("teacherGroupGrid");
+
+      if (!data.groups.length) {
+        const empty = `
+          <div class="empty" style="grid-column: 1 / -1;">
+            Bạn chưa có nhóm nào. Hãy tạo nhóm để bắt đầu.
+          </div>
+        `;
+
+        groupGrid.innerHTML = empty;
+        dashboardGrid.innerHTML = empty;
+        teacherGrid.innerHTML = empty;
+        return;
+      }
+
+      groupGrid.innerHTML = data.groups.map(group => groupCardHTML(group)).join("");
+      dashboardGrid.innerHTML = data.groups.slice(0, 2).map(group => groupCardHTML(group)).join("");
+      teacherGrid.innerHTML = data.groups.map(group => groupCardHTML(group, true)).join("");
+      document.getElementById("teacherContrib").innerHTML = data.groups.map(group => `
+        <div style="margin-top: 18px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <h3 class="card-title">${escapeHTML(group.name)}</h3>
+            <button class="btn btn-soft btn-small" onclick="exportContribution('${group.id}')">Xuất bảng đóng góp</button>
+          </div>
+          ${contributionHTML(group, true)}
+        </div>`).join("");
+    }
+
+    function renderPersonalTasks() {
+      const container = document.getElementById("personalTaskList");
+
+      let tasks = allTasks();
+
+      if (personalFilter === "todo") {
+        tasks = tasks.filter(task => !task.completed && task.status !== "doing");
+      }
+
+      if (personalFilter === "doing") {
+        tasks = tasks.filter(task => task.status === "doing" && !task.completed);
+      }
+
+      if (personalFilter === "done") {
+        tasks = tasks.filter(task => task.completed || task.status === "done");
+      }
+
+      if (personalFilter === "overdue") {
+        tasks = tasks.filter(task => !task.completed && daysUntil(task.date) < 0);
+      }
+
+      tasks.sort((a, b) => a.date.localeCompare(b.date));
+
+      if (!tasks.length) {
+        container.innerHTML = `<div class="empty">Không có công việc phù hợp.</div>`;
+        return;
+      }
+
+      container.innerHTML = tasks.map(taskItemHTML).join("");
+    }
+
+    function renderCalendar(targetId, titleId) {
+      const container = document.getElementById(targetId);
+      const title = document.getElementById(titleId);
+
+      const year = calendarDate.getFullYear();
+      const month = calendarDate.getMonth();
+
+      title.textContent = calendarDate.toLocaleDateString("vi-VN", {
+        month: "long",
+        year: "numeric"
+      });
+
+      const firstDay = new Date(year, month, 1);
+      const lastDay = new Date(year, month + 1, 0);
+
+      let startDay = firstDay.getDay();
+      startDay = startDay === 0 ? 6 : startDay - 1;
+
+      const tasks = allTasks();
+      let day = 1;
+
+      let html = `
+        <table class="calendar-table">
+          <thead>
+            <tr>
+              <th>Thứ 2</th>
+              <th>Thứ 3</th>
+              <th>Thứ 4</th>
+              <th>Thứ 5</th>
+              <th>Thứ 6</th>
+              <th>Thứ 7</th>
+              <th>Chủ nhật</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+
+      for (let row = 0; row < 6; row++) {
+        html += "<tr>";
+
+        for (let column = 0; column < 7; column++) {
+          const index = row * 7 + column;
+
+          if (index < startDay || day > lastDay.getDate()) {
+            html += "<td></td>";
+            continue;
+          }
+
+          const currentDate = new Date(year, month, day);
+          const dateString = localDateString(currentDate);
+          const isToday = dateString === localDateString();
+
+          const events = tasks
+            .filter(task => task.date === dateString)
+            .slice(0, 3);
+
+          html += `
+            <td>
+              <span class="calendar-day ${isToday ? "today" : ""}">${day}</span>
+              ${events.map(event => `
+                <div class="calendar-event" title="${escapeHTML(event.name)}">
+                  ${escapeHTML(event.name)}
+                </div>
+              `).join("")}
+            </td>
+          `;
+
+          day++;
+        }
+
+        html += "</tr>";
+
+        if (day > lastDay.getDate()) break;
+      }
+
+      html += "</tbody></table>";
+      container.innerHTML = html;
+    }
+
+    const PRIORITY_WEIGHT = { "Cao": 3, "Vừa": 2, "Thấp": 1 };
+
+    const TASK_TEMPLATES = {
+      "Báo cáo": ["Xác định đề cương", "Tìm tài liệu tham khảo", "Viết nội dung chính", "Làm số liệu và hình minh họa", "Tổng hợp và chỉnh sửa", "Kiểm tra lỗi và nộp bài"],
+      "Thuyết trình": ["Thống nhất nội dung", "Soạn kịch bản", "Thiết kế slide", "Phân chia phần nói", "Luyện tập", "Chốt bản cuối"],
+      "Dự án": ["Xác định vấn đề", "Nghiên cứu đối thủ", "Lên giải pháp", "Làm bản mẫu", "Kiểm thử với người dùng", "Hoàn thiện và nộp"]
+    };
+
+    function addDays(dateStr, n) {
+      const d = new Date(dateStr + "T00:00:00");
+      d.setDate(d.getDate() + n);
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+    }
+
+    function templateTasks(kind, members, deadline) {
+      const list = TASK_TEMPLATES[kind];
+      if (!list) return [];
+      const today = localDateString();
+      const span = Math.max(daysUntil(deadline), 1);
+      return list.map((name, i) => ({
+        id: uid("task"),
+        name,
+        assignee: members[i % members.length],
+        date: addDays(today, Math.max(0, Math.round(((i + 1) / list.length) * span))),
+        status: "todo",
+        completed: false,
+        link: "",
+        priority: i === 0 || i === list.length - 1 ? "Cao" : "Vừa"
+      }));
+    }
+
+    function taskHours(task) {
+      return Number(task.hours) || PRIORITY_WEIGHT[task.priority] || 2;
+    }
+
+    function renderWeekCard() {
+      const el = document.getElementById("weekCard");
+      if (!el) return;
+      const open = allTasks().filter(t => !(t.completed || t.status === "done"));
+      const hours = open.filter(t => { const d = daysUntil(t.date); return d >= 0 && d <= 6; })
+        .reduce((sum, t) => sum + taskHours(t), 0);
+      const LIMIT = 20;
+      const pct = Math.min(100, Math.round((hours / LIMIT) * 100));
+      const level = hours > LIMIT ? ["bad", "Quá tải: hãy dời bớt hoặc nhờ nhóm chia lại"]
+        : hours > LIMIT * 0.6 ? ["warn", "Khá nặng: ưu tiên việc gần hạn"] : ["ok", "Vừa sức"];
+      const top = open.filter(t => daysUntil(t.date) <= 3)
+        .sort((a, b) => daysUntil(a.date) - daysUntil(b.date) || (PRIORITY_WEIGHT[b.priority] || 2) - (PRIORITY_WEIGHT[a.priority] || 2))
+        .slice(0, 3);
+      const due = d => d < 0 ? `Quá ${-d} ngày` : d === 0 ? "Hôm nay" : `Còn ${d} ngày`;
+
+      el.innerHTML = `
+        <div class="card-header"><div>
+          <h3 class="card-title">Tuần này của bạn</h3>
+          <p class="card-description">Gộp cả việc cá nhân và việc nhóm. Việc chưa nhập giờ được ước tính theo mức ưu tiên.</p>
+        </div></div>
+        <div class="group-progress-line">
+          <span>Khối lượng 7 ngày tới: <strong>${hours} giờ</strong> / ${LIMIT} giờ <span class="contrib-flag ${level[0]}">${level[1]}</span></span>
+        </div>
+        <div class="progress"><div class="progress-bar ${hours > LIMIT ? "contrib-bar-red" : ""}" style="width: ${pct}%"></div></div>
+        <h4 style="margin: 18px 0 4px; font-size: 14px;">3 việc quan trọng nhất</h4>
+        ${top.length ? top.map((t, i) => `
+          <div class="contrib-row" style="grid-template-columns: 28px 1fr 120px; gap: 10px; padding: 10px 0;">
+            <strong>${i + 1}</strong>
+            <div>${escapeHTML(t.name)}<div class="contrib-meta">${escapeHTML(t.groupName)}</div></div>
+            <div style="text-align: right; font-size: 12px; font-weight: 800; color: ${daysUntil(t.date) < 0 ? "var(--red)" : "var(--muted)"};">${due(daysUntil(t.date))}</div>
+          </div>`).join("") : `<div class="empty">Không có việc gấp. Bạn đang rất ổn!</div>`}`;
+    }
+
+    function copyText(text, okMsg) {
+      const fallback = () => {
+        const area = document.createElement("textarea");
+        area.value = text;
+        document.body.appendChild(area);
+        area.select();
+        try { document.execCommand("copy"); } catch (error) {}
+        area.remove();
+        showToast(okMsg);
+      };
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(() => showToast(okMsg)).catch(fallback);
+      } else {
+        fallback();
+      }
+    }
+
+    function exportICS() {
+      const open = allTasks().filter(t => !(t.completed || t.status === "done") && t.date);
+      if (!open.length) { showToast("Chưa có việc nào để xuất."); return; }
+      const esc = text => String(text).replace(/([,;\\])/g, "\\$1");
+      const stamp = new Date().toISOString().replace(/[-:]/g, "").slice(0, 15) + "Z";
+      const events = open.map(t => [
+        "BEGIN:VEVENT",
+        `UID:${t.id}@uniplan`,
+        `DTSTAMP:${stamp}`,
+        `DTSTART;VALUE=DATE:${t.date.replace(/-/g, "")}`,
+        `DTEND;VALUE=DATE:${addDays(t.date, 1).replace(/-/g, "")}`,
+        `SUMMARY:${esc(`${t.name} (${t.groupName})`)}`,
+        "END:VEVENT"
+      ].join("\r\n"));
+      const ics = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//UniPlan//VI", ...events, "END:VCALENDAR"].join("\r\n");
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(new Blob([ics], { type: "text/calendar;charset=utf-8" }));
+      link.download = "uniplan-deadline.ics";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      showToast("Đã tải file lịch. Mở file để thêm vào Google Calendar hoặc Apple Calendar.");
+    }
+
+    function shareGroupCode(groupId) {
+      const g = data.groups.find(item => item.id === groupId);
+      if (!g) return;
+      const payload = {
+        n: g.name, p: g.project, d: g.description, dl: g.deadline, m: g.members,
+        t: g.tasks.map(({ name, assignee, date, status, completed, link, priority }) => ({ name, assignee, date, status, completed, link, priority }))
+      };
+      const code = "UP1." + btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
+      copyText(code, "Đã sao chép mã nhóm. Gửi cho bạn cùng nhóm để tham gia.");
+    }
+
+    function joinGroupByCode() {
+      const raw = (prompt("Dán mã nhóm vào đây:") || "").trim();
+      if (!raw) return;
+      try {
+        if (!raw.startsWith("UP1.")) throw new Error("bad code");
+        const p = JSON.parse(decodeURIComponent(escape(atob(raw.slice(4)))));
+        const members = p.m.includes(CURRENT_USER) ? p.m : [...p.m, CURRENT_USER];
+        data.groups.push({
+          id: uid("group"), name: p.n, project: p.p, description: p.d || "", deadline: p.dl, members,
+          materials: [], submissionUrl: "", tasks: p.t.map(t => ({ ...t, id: uid("task") }))
+        });
+        saveData();
+        renderAll();
+        showToast(`Đã tham gia nhóm ${p.n}`);
+      } catch (error) {
+        showToast("Mã nhóm không hợp lệ.");
+      }
+    }
+
+    function exportContribution(groupId) {
+      const g = data.groups.find(item => item.id === groupId);
+      if (!g) return;
+      const stats = memberStats(g);
+      const sum = stats.reduce((total, item) => total + item.wDone, 0);
+      const rows = stats.map(item => {
+        const share = sum ? Math.round((item.wDone / sum) * 100) : 0;
+        const done = item.doneList.map(t => `<li>${escapeHTML(t.name)} — ${t.link ? escapeHTML(t.link) : "(chưa có link bằng chứng)"}</li>`).join("") || "<li>Chưa có</li>";
+        const pend = item.pending.map(t => `<li>${escapeHTML(t.name)} (hạn ${formatDate(t.date)})</li>`).join("") || "<li>Không còn</li>";
+        return `<tr><td><b>${escapeHTML(item.member)}</b></td><td><ul>${done}</ul></td><td><ul>${pend}</ul></td><td>${item.percent}%</td><td>${share}%</td></tr>`;
+      }).join("");
+
+      let area = document.getElementById("printArea");
+      if (!area) { area = document.createElement("div"); area.id = "printArea"; document.body.appendChild(area); }
+      area.innerHTML = `
+        <h1>Bảng đóng góp: ${escapeHTML(g.name)}</h1>
+        <p>${escapeHTML(g.project)} · Deadline chung: ${formatDate(g.deadline)} · Tiến độ nhóm: ${groupProgress(g)}%</p>
+        <p style="font-size: 12px;">Điểm hoàn thành tính theo mức ưu tiên (Cao ×3, Vừa ×2, Thấp ×1). Tỷ trọng là phần đóng góp của từng người trong tổng việc đã xong. Việc giao cho "Cả nhóm" không tính.</p>
+        <table>
+          <tr><th>Thành viên</th><th>Việc đã xong và bằng chứng</th><th>Việc chưa xong</th><th>Hoàn thành</th><th>Tỷ trọng</th></tr>
+          ${rows}
+        </table>`;
+      window.print();
+    }
+
+    function memberStats(group) {
+      return group.members.map((member, index) => {
+        const mine = group.tasks.filter(task => task.assignee === member);
+        const done = mine.filter(task => task.completed || task.status === "done").length;
+        const overdue = mine.filter(task => !(task.completed || task.status === "done") && daysUntil(task.date) < 0).length;
+        const pending = mine.filter(task => !(task.completed || task.status === "done"));
+        const wt = task => PRIORITY_WEIGHT[task.priority] || 2;
+        const doneList = mine.filter(task => task.completed || task.status === "done");
+        const wTotal = mine.reduce((sum, task) => sum + wt(task), 0);
+        const wDone = doneList.reduce((sum, task) => sum + wt(task), 0);
+        const percent = wTotal ? Math.round((wDone / wTotal) * 100) : 0;
+        return { member, index, total: mine.length, done, overdue, pending, percent, doneList, wTotal, wDone };
+      });
+    }
+
+    function contributionHTML(group, readOnly = false) {
+      const stats = memberStats(group);
+      const sharedCount = group.tasks.filter(task => !group.members.includes(task.assignee)).length;
+      const isLeader = !readOnly && currentAccount.role === "leader";
+
+      const rows = stats.map(item => {
+        let flag = `<span class="contrib-flag ok">Đúng tiến độ</span>`;
+        if (!item.total) flag = `<span class="contrib-flag warn">Chưa được giao việc</span>`;
+        else if (item.overdue) flag = `<span class="contrib-flag bad">${item.overdue} việc quá hạn</span>`;
+        else if (item.done === item.total) flag = `<span class="contrib-flag ok">Hoàn thành hết</span>`;
+
+        const barClass = item.overdue ? "progress-bar contrib-bar-red" : "progress-bar contrib-bar-green";
+        const nudge = isLeader && item.pending.length
+          ? `<button class="btn btn-soft btn-small" onclick="nudgeMember('${group.id}', ${item.index})">Nhắc việc</button>`
+          : "";
+
+        return `
+          <div class="contrib-row">
+            <div class="contrib-person">
+              <div class="avatar" style="background: ${avatarColor(item.index)}">${escapeHTML(initials(item.member))}</div>
+              ${escapeHTML(item.member)}
+            </div>
+            <div>
+              <div class="progress"><div class="${barClass}" style="width: ${item.percent}%"></div></div>
+              <div class="contrib-meta">${item.done}/${item.total} việc hoàn thành · ${item.percent}% ${flag}</div>
+            </div>
+            <div style="text-align: right;">${nudge}</div>
+          </div>`;
+      }).join("");
+
+      return `
+        <div class="card" style="margin-bottom: 18px;">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">Đóng góp của từng thành viên</h3>
+              <p class="card-description">
+                Tính theo mức ưu tiên (Cao ×3, Vừa ×2, Thấp ×1) trên việc giao riêng cho từng người${sharedCount ? ` (${sharedCount} việc chung của cả nhóm không tính vào đây)` : ""}.
+              </p>
+            </div>
+          </div>
+          ${rows}
+        </div>`;
+    }
+
+    function nudgeMember(groupId, memberIndex) {
+      const group = data.groups.find(item => item.id === groupId);
+      if (!group) return;
+
+      const item = memberStats(group)[memberIndex];
+      const lines = item.pending.map(task => `- ${task.name} (hạn ${formatDate(task.date)})`).join("\n");
+      const message =
+`Chào ${item.member}, nhóm "${group.name}" nhắc bạn còn ${item.pending.length} việc chưa xong:
+${lines}
+Deadline chung: ${formatDate(group.deadline)}. Bạn cập nhật tiến độ trên UniPlan giúp nhóm nhé!`;
+
+      const fallbackCopy = () => {
+        const area = document.createElement("textarea");
+        area.value = message;
+        document.body.appendChild(area);
+        area.select();
+        try { document.execCommand("copy"); } catch (error) {}
+        area.remove();
+        showToast(`Đã sao chép tin nhắn nhắc ${item.member}. Dán vào Zalo/Messenger.`);
+      };
+
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(message)
+          .then(() => showToast(`Đã sao chép tin nhắn nhắc ${item.member}. Dán vào Zalo/Messenger.`))
+          .catch(fallbackCopy);
+      } else {
+        fallbackCopy();
+      }
+    }
+
+    function renderGroupDetail() {
+      const container = document.getElementById("groupDetailContent");
+      const group = data.groups.find(item => item.id === activeGroupId);
+
+      if (!group) {
+        container.innerHTML = `<div class="card"><div class="empty">Không tìm thấy nhóm.</div></div>`;
+        return;
+      }
+
+      const progress = groupProgress(group);
+      const done = group.tasks.filter(task => task.completed || task.status === "done").length;
+      const doing = group.tasks.filter(task => task.status === "doing" && !task.completed).length;
+      const overdue = group.tasks.filter(task => !task.completed && daysUntil(task.date) < 0).length;
+
+      container.innerHTML = `
+        <div class="detail-heading">
+          <div>
+            <h2 class="detail-title">${escapeHTML(group.name)}</h2>
+            <div class="detail-subtitle">
+              ${escapeHTML(group.project)} · ${escapeHTML(group.description || "Chưa có mô tả")}
+            </div>
+          </div>
+
+          <div class="detail-actions">
+            <button class="btn btn-outline" onclick="openTeacherView()">
+              Mở Teacher View
+            </button>
+            <button class="btn btn-outline" onclick="exportContribution('${group.id}')">Xuất bảng đóng góp</button>
+            <button class="btn btn-outline" onclick="shareGroupCode('${group.id}')">Mã nhóm</button>
+            ${
+  currentAccount.role === "leader"
+    ? `
+      <button class="btn btn-primary" onclick="openTaskModal('${group.id}')">
+        + Giao việc
+      </button>
+    `
+    : ""
+}
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom: 18px;">
+          <div class="mini-stats">
+            <div class="mini-stat">
+              <div class="mini-stat-label">Tiến độ nhóm</div>
+              <div class="mini-stat-value">${progress}%</div>
+            </div>
+
+            <div class="mini-stat">
+              <div class="mini-stat-label">Đã hoàn thành</div>
+              <div class="mini-stat-value">${done}</div>
+            </div>
+
+            <div class="mini-stat">
+              <div class="mini-stat-label">Đang làm</div>
+              <div class="mini-stat-value">${doing}</div>
+            </div>
+
+            <div class="mini-stat">
+              <div class="mini-stat-label">Quá hạn</div>
+              <div class="mini-stat-value" style="color: ${overdue ? "var(--red)" : "var(--green)"};">
+                ${overdue}
+              </div>
+            </div>
+          </div>
+
+          <div class="group-progress-line">
+            <span>Deadline chung: ${formatDate(group.deadline)}</span>
+            <strong>${progress}%</strong>
+          </div>
+
+          <div class="progress">
+            <div class="progress-bar" style="width: ${progress}%"></div>
+          </div>
+        </div>
+
+        ${contributionHTML(group)}
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">Bảng công việc</h3>
+              <p class="card-description">
+                Nhóm trưởng tự tạo và chỉnh sửa công việc theo kế hoạch của nhóm.
+              </p>
+            </div>
+          </div>
+
+          <div class="filter-row" id="groupFilter">
+            <button class="filter-btn active" data-group-filter="all">Tất cả</button>
+            <button class="filter-btn" data-group-filter="todo">Chưa làm</button>
+            <button class="filter-btn" data-group-filter="doing">Đang làm</button>
+            <button class="filter-btn" data-group-filter="done">Hoàn thành</button>
+            <button class="filter-btn" data-group-filter="overdue">Quá hạn</button>
+          </div>
+
+          <div class="table-wrapper">
+            <table class="task-table">
+              <thead>
+                <tr>
+                  <th style="width: 25%;">Công việc</th>
+                 <th>Ai thực hiện?</th>
+                 <th>Hạn hoàn thành</th>
+                  <th>Trạng thái</th>
+                  <th>Link</th>
+                  <th>Thao tác</th>
+                </tr>
+              </thead>
+              <tbody id="groupTaskTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="resource-grid">
+          <div class="resource-card">
+            <h3 class="resource-title">Tài liệu nhóm</h3>
+            <p class="resource-description">
+              Các link Google Docs, Drive, Canva hoặc tài liệu nhóm.
+            </p>
+
+            <div class="link-list">
+              ${
+                group.materials.length
+                  ? group.materials.map((item, index) => `
+                    <a
+                      class="resource-link"
+                      href="${escapeHTML(item.url)}"
+                      target="_blank"
+                      rel="noopener"
+                    >
+                      <span>↗ ${escapeHTML(item.name)}</span>
+                      <button
+                        class="btn btn-danger btn-small"
+                        onclick="event.preventDefault(); deleteMaterial('${group.id}', ${index})"
+                      >
+                        Xóa
+                      </button>
+                    </a>
+                  `).join("")
+                  : `<div class="empty">Chưa có tài liệu nào.</div>`
+              }
+            </div>
+
+            <button class="btn btn-soft btn-small" onclick="addMaterial('${group.id}')">
+              + Thêm liên kết
+            </button>
+          </div>
+
+          <div class="resource-card">
+            <h3 class="resource-title">Bài nộp cuối cùng</h3>
+            <p class="resource-description">
+              Lưu link bài hoàn chỉnh để nhóm và giảng viên cùng theo dõi.
+            </p>
+
+            <div class="submit-box">
+              <div class="submit-status">
+                <span>Trạng thái</span>
+                ${
+                  group.submissionUrl
+                    ? `<span class="badge badge-green">Đã cập nhật link</span>`
+                    : `<span class="badge badge-gray">Chưa nộp</span>`
+                }
+              </div>
+
+              <div class="submit-input">
+                <input
+                  id="submissionInput"
+                  type="url"
+                  value="${escapeHTML(group.submissionUrl || "")}"
+                  placeholder="Dán link bài nộp..."
+                />
+                <button class="btn btn-primary btn-small" onclick="saveSubmission('${group.id}')">
+                  Lưu
+                </button>
+              </div>
+
+              ${
+                group.submissionUrl
+                  ? `
+                    <a
+                      href="${escapeHTML(group.submissionUrl)}"
+                      target="_blank"
+                      rel="noopener"
+                      class="resource-link"
+                      style="margin-top: 10px;"
+                    >
+                      <span>↗ Mở bài nộp</span>
+                    </a>
+                  `
+                  : ""
+              }
+            </div>
+          </div>
+        </div>
+      `;
+
+      renderGroupTasks("all");
+      bindGroupFilters();
+    }
+
+    let groupFilter = "all";
+
+    function renderGroupTasks(filter = groupFilter) {
+      groupFilter = filter;
+
+      const group = data.groups.find(item => item.id === activeGroupId);
+      const body = document.getElementById("groupTaskTableBody");
+
+      if (!group || !body) return;
+
+      let tasks = [...group.tasks];
+
+      if (filter === "todo") {
+        tasks = tasks.filter(task => !task.completed && task.status !== "doing");
+      }
+
+      if (filter === "doing") {
+        tasks = tasks.filter(task => task.status === "doing" && !task.completed);
+      }
+
+      if (filter === "done") {
+        tasks = tasks.filter(task => task.completed || task.status === "done");
+      }
+
+      if (filter === "overdue") {
+        tasks = tasks.filter(task => !task.completed && daysUntil(task.date) < 0);
+      }
+
+      if (!tasks.length) {
+        body.innerHTML = `
+          <tr>
+            <td colspan="6">
+              <div class="empty">Không có công việc phù hợp.</div>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      body.innerHTML = tasks.map(task => `
+        <tr>
+          <td>
+            <input
+              <input
+  value="${escapeHTML(task.name)}"
+  ${currentAccount.role !== "leader" ? "disabled" : ""}
+  onchange="updateGroupTask('${group.id}', '${task.id}', 'name', this.value)"
+/>
+          </td>
+
+          <td>
+            <select onchange="updateGroupTask('${group.id}', '${task.id}', 'assignee', this.value)">
+              ${group.members.map(member => `
+                <option value="${escapeHTML(member)}" ${member === task.assignee ? "selected" : ""}>
+                  ${escapeHTML(member)}
+                </option>
+              `).join("")}
+            </select>
+          </td>
+
+          <td>
+            <input
+              type="date"
+              value="${task.date}"
+              onchange="updateGroupTask('${group.id}', '${task.id}', 'date', this.value)"
+            />
+          </td>
+
+          <td>
+            <select onchange="updateGroupTask('${group.id}', '${task.id}', 'status', this.value)">
+              <option value="todo" ${statusValue(task) === "todo" ? "selected" : ""}>Chưa làm</option>
+              <option value="doing" ${statusValue(task) === "doing" ? "selected" : ""}>Đang làm</option>
+              <option value="help" ${statusValue(task) === "help" ? "selected" : ""}>Cần hỗ trợ</option>
+              <option value="done" ${statusValue(task) === "done" ? "selected" : ""}>Hoàn thành</option>
+            </select>
+
+            <div style="margin-top: 6px;">
+              <span class="badge ${statusClass(task)}">${statusLabel(task)}</span>
+            </div>
+          </td>
+
+          <td>
+            ${
+              task.link
+                ? `
+                  <a
+                    href="${escapeHTML(task.link)}"
+                    target="_blank"
+                    rel="noopener"
+                    class="btn btn-soft btn-small"
+                  >
+                    Mở link
+                  </a>
+                `
+                : `<span style="color: var(--muted); font-size: 11px;">Chưa có</span>`
+            }
+          </td>
+
+          <td>
+            <button
+              class="btn btn-danger btn-small"
+              onclick="deleteGroupTask('${group.id}', '${task.id}')"
+            >
+              Xóa
+            </button>
+          </td>
+        </tr>
+      `).join("");
+    }
+
+    function bindGroupFilters() {
+      document.querySelectorAll("[data-group-filter]").forEach(button => {
+        button.addEventListener("click", () => {
+          document.querySelectorAll("[data-group-filter]").forEach(item => {
+            item.classList.remove("active");
+          });
+
+          button.classList.add("active");
+          renderGroupTasks(button.dataset.groupFilter);
+        });
+      });
+    }
+
+    function switchPage(page) {
+      activePage = page;
+
+      document.querySelectorAll(".page").forEach(section => {
+        section.classList.remove("active");
+      });
+
+      const pageElement = document.getElementById(`${page}Page`);
+
+      if (pageElement) {
+        pageElement.classList.add("active");
+      }
+
+      document.querySelectorAll(".nav-item").forEach(item => {
+        item.classList.toggle("active", item.dataset.page === page);
+      });
+
+      const titles = {
+        dashboard: [
+          "Chào Ngọc Ánh, hôm nay bạn cần làm gì?",
+          "Theo dõi việc cá nhân và công việc nhóm ở một nơi."
+        ],
+        personal: [
+          "Việc của tôi",
+          "Tất cả task cá nhân và task được giao từ các nhóm."
+        ],
+        groups: [
+          "Nhóm của tôi",
+          "Chọn một nhóm để xem bảng công việc, tài liệu và bài nộp."
+        ],
+        groupDetail: [
+          "Chi tiết nhóm",
+          "Theo dõi công việc, tài liệu và tiến độ của nhóm."
+        ],
+        calendar: [
+          "Lịch của tôi",
+          "Deadline và task được sắp xếp theo ngày."
+        ],
+        teacher: [
+          "Teacher View",
+          "Tổng quan tiến độ và bài nộp của các nhóm."
+        ]
+      };
+
+      const title = titles[page] || titles.dashboard;
+      document.getElementById("pageTitle").textContent = title[0];
+      document.getElementById("pageSubtitle").textContent = title[1];
+function updateAccountInterface() {
+  const avatar = document.getElementById("currentAvatar");
+  const name = document.getElementById("currentUserName");
+  const role = document.getElementById("currentUserRole");
+  const banner = document.getElementById("roleBannerText");
+
+  if (avatar) {
+    avatar.textContent = currentAccount.initials;
+    avatar.style.background = currentAccount.color;
+  }
+
+  if (name) {
+    name.textContent = currentAccount.name;
+  }
+
+  if (role) {
+    role.textContent = currentAccount.roleName;
+  }
+
+  if (banner) {
+    banner.textContent = currentAccount.role === "leader"
+      ? "Bạn đang xem UniPlan với tư cách Nhóm trưởng. Bạn có thể tạo nhóm, giao việc và theo dõi toàn bộ tiến độ."
+      : "Bạn đang xem UniPlan với tư cách Thành viên. Bạn có thể xem việc được giao, cập nhật trạng thái và mở tài liệu nhóm.";
+  }
+
+  document.querySelectorAll(".account-option").forEach(option => {
+    option.classList.toggle(
+      "active",
+      option.dataset.account === currentAccount.id
+    );
+  });
+
+  applyRolePermissions();
+}
+
+function applyRolePermissions() {
+  const leaderElements = document.querySelectorAll(".leader-only");
+
+  leaderElements.forEach(element => {
+    element.classList.toggle(
+      "hidden-by-role",
+      currentAccount.role !== "leader"
+    );
+  });
+}
+
+function switchAccount(accountId) {
+  const account = ACCOUNTS[accountId];
+
+  if (!account) return;
+
+  currentAccount = account;
+  CURRENT_USER = account.name;
+
+  const accountMenu = document.getElementById("accountMenu");
+  accountMenu?.classList.remove("show");
+
+  updateAccountInterface();
+  renderAll();
+
+  showToast(`Đã chuyển sang tài khoản ${account.name}`);
+}
+
+document
+  .getElementById("accountSwitchButton")
+  ?.addEventListener("click", event => {
+    event.stopPropagation();
+
+    document
+      .getElementById("accountMenu")
+      ?.classList.toggle("show");
+  });
+
+document.querySelectorAll(".account-option").forEach(option => {
+  option.addEventListener("click", () => {
+    switchAccount(option.dataset.account);
+  });
+});
+
+document.addEventListener("click", event => {
+  const menu = document.getElementById("accountMenu");
+  const switchButton = document.getElementById("accountSwitchButton");
+
+  if (
+    menu &&
+    !menu.contains(event.target) &&
+    event.target !== switchButton
+  ) {
+    menu.classList.remove("show");
+  }
+});
+
+updateAccountInterface();
+      renderAll();
+    }
+
+    function openGroupDetail(groupId, teacherMode = false) {
+      activeGroupId = groupId;
+      groupFilter = "all";
+
+      if (teacherMode) {
+        switchPage("groupDetail");
+        return;
+      }
+
+      switchPage("groupDetail");
+    }
+
+    function openTeacherView() {
+      switchPage("teacher");
+    }
+
+    function toggleTask(taskId, source, groupId) {
+      if (source === "personal") {
+        const task = data.personalTasks.find(item => item.id === taskId);
+
+        if (task) {
+          task.completed = !task.completed;
+          task.status = task.completed ? "done" : "todo";
+        }
+      } else {
+        const group = data.groups.find(item => item.id === groupId);
+        const task = group?.tasks.find(item => item.id === taskId);
+
+        if (task) {
+          task.completed = !task.completed;
+          task.status = task.completed ? "done" : "todo";
+        }
+      }
+
+      saveData();
+      renderAll();
+      showToast("Đã cập nhật trạng thái công việc");
+    }
+
+    function updateGroupTask(groupId, taskId, field, value) {
+  const group = data.groups.find(item => item.id === groupId);
+  const task = group?.tasks.find(item => item.id === taskId);
+
+  if (!task) return;
+
+  const isTaskOwner =
+    task.assignee === currentAccount.name ||
+    task.assignee === "Cả nhóm";
+
+  if (
+    currentAccount.role !== "leader" &&
+    field !== "status" &&
+    !isTaskOwner
+  ) {
+    showToast("Bạn không có quyền chỉnh sửa thông tin này.");
+    renderAll();
+    return;
+  }
+
+  if (
+    currentAccount.role !== "leader" &&
+    field === "status" &&
+    !isTaskOwner
+  ) {
+    showToast("Bạn chỉ có thể cập nhật task được giao cho mình.");
+    renderAll();
+    return;
+  }
+
+      task[field] = value;
+
+      if (field === "status") {
+        task.completed = value === "done";
+      }
+
+      saveData();
+      renderAll();
+      showToast("Đã cập nhật công việc");
+    }
+
+    function deleteGroupTask(groupId, taskId) {
+      const group = data.groups.find(item => item.id === groupId);
+      if (!group) return;
+
+      group.tasks = group.tasks.filter(task => task.id !== taskId);
+
+      saveData();
+      renderAll();
+      showToast("Đã xóa công việc");
+    }
+
+    function addMaterial(groupId) {
+      const group = data.groups.find(item => item.id === groupId);
+      if (!group) return;
+
+      const name = prompt("Tên liên kết:", "Google Docs - Tài liệu nhóm");
+      if (!name) return;
+
+      const url = prompt("Dán URL:");
+      if (!url) return;
+
+      group.materials.push({ name, url });
+      saveData();
+      renderAll();
+      showToast("Đã thêm liên kết tài liệu");
+    }
+
+    function deleteMaterial(groupId, index) {
+      const group = data.groups.find(item => item.id === groupId);
+      if (!group) return;
+
+      group.materials.splice(index, 1);
+      saveData();
+      renderAll();
+      showToast("Đã xóa liên kết");
+    }
+
+    function saveSubmission(groupId) {
+      const group = data.groups.find(item => item.id === groupId);
+      const input = document.getElementById("submissionInput");
+
+      if (!group || !input) return;
+
+      group.submissionUrl = input.value.trim();
+      saveData();
+      renderAll();
+      showToast(group.submissionUrl ? "Đã lưu link bài nộp" : "Đã xóa link bài nộp");
+    }
+
+    function openDeadlineModal() {
+      document.getElementById("deadlineForm").reset();
+
+      const defaultDate = new Date();
+      defaultDate.setDate(defaultDate.getDate() + 7);
+
+      document.getElementById("deadlineDate").value = localDateString(defaultDate);
+      openModal("deadlineModal");
+    }
+
+    function openGroupModal() {
+      document.getElementById("groupForm").reset();
+
+      const defaultDate = new Date();
+      defaultDate.setDate(defaultDate.getDate() + 14);
+
+      document.getElementById("groupDeadline").value = localDateString(defaultDate);
+      openModal("groupModal");
+    }
+
+    function openTaskModal(groupId) {
+  if (currentAccount.role !== "leader") {
+    showToast("Chỉ nhóm trưởng mới có quyền giao việc.");
+    return;
+  }
+
+  const group = data.groups.find(item => item.id === groupId);
+  if (!group) return;
+
+      document.getElementById("taskForm").reset();
+      document.getElementById("taskGroupId").value = groupId;
+
+      document.getElementById("taskAssignee").innerHTML = group.members.map(member => `
+        <option value="${escapeHTML(member)}">${escapeHTML(member)}</option>
+      `).join("");
+
+      const defaultDate = new Date();
+      defaultDate.setDate(defaultDate.getDate() + 3);
+      document.getElementById("taskDate").value = localDateString(defaultDate);
+
+      openModal("taskModal");
+    }
+
+    function renderAll() {
+      renderStats();
+      renderWeekCard();
+      renderTodayTasks();
+      renderUpcomingDeadlines();
+      renderGroupCards();
+      renderPersonalTasks();
+      renderCalendar("calendarContainer", "calendarMonth");
+      renderCalendar("calendarContainer2", "calendarMonth2");
+
+      if (activePage === "groupDetail") {
+        renderGroupDetail();
+      }
+    }
+
+    // Deadline form
+    document.getElementById("deadlineForm").addEventListener("submit", event => {
+      event.preventDefault();
+
+      const deadline = {
+        id: uid("deadline"),
+        name: document.getElementById("deadlineName").value.trim(),
+        type: document.getElementById("deadlineType").value,
+        level: document.getElementById("deadlineLevel").value,
+        date: document.getElementById("deadlineDate").value,
+        hours: Number(document.getElementById("deadlineHours").value)
+      };
+
+      data.deadlines.push(deadline);
+
+      data.personalTasks.push({
+        id: uid("personal"),
+        name: deadline.name,
+        date: deadline.date,
+        status: "todo",
+        completed: false,
+        groupName: "Cá nhân",
+        hours: deadline.hours
+      });
+
+      saveData();
+      closeModal("deadlineModal");
+      renderAll();
+      showToast("Đã thêm deadline mới");
+    });
+
+    // Group form
+    document.getElementById("groupForm").addEventListener("submit", event => {
+      event.preventDefault();
+
+      const membersInput = document.getElementById("groupMembers").value.trim();
+
+      const additionalMembers = membersInput
+        ? membersInput.split(",").map(item => item.trim()).filter(Boolean)
+        : [];
+
+      const members = [
+        CURRENT_USER,
+        ...additionalMembers.filter(member => member !== CURRENT_USER)
+      ];
+
+      data.groups.push({
+        id: uid("group"),
+        name: document.getElementById("groupName").value.trim(),
+        project: document.getElementById("groupProject").value.trim(),
+        description: document.getElementById("groupDescription").value.trim(),
+        deadline: document.getElementById("groupDeadline").value,
+        members,
+        materials: [],
+        submissionUrl: "",
+        tasks: templateTasks(document.getElementById("groupTemplate").value, members, document.getElementById("groupDeadline").value)
+      });
+
+      saveData();
+      closeModal("groupModal");
+      renderAll();
+      showToast("Đã tạo nhóm mới");
+    });
+
+    // Task form
+    document.getElementById("taskForm").addEventListener("submit", event => {
+      event.preventDefault();
+
+      const groupId = document.getElementById("taskGroupId").value;
+      const group = data.groups.find(item => item.id === groupId);
+
+      if (!group) return;
+
+      group.tasks.push({
+        id: uid("task"),
+        name: document.getElementById("taskName").value.trim(),
+        assignee: document.getElementById("taskAssignee").value,
+        date: document.getElementById("taskDate").value,
+        status: "todo",
+        completed: false,
+        link: document.getElementById("taskLink").value.trim(),
+        priority: document.getElementById("taskPriority").value
+      });
+
+      saveData();
+      closeModal("taskModal");
+      renderAll();
+      showToast("Đã giao việc cho thành viên");
+    });
+
+    // Navigation
+    document.querySelectorAll(".nav-item").forEach(item => {
+      item.addEventListener("click", () => switchPage(item.dataset.page));
+    });
+
+    // Personal filters
+    document.querySelectorAll("[data-filter]").forEach(button => {
+      button.addEventListener("click", () => {
+        document.querySelectorAll("[data-filter]").forEach(item => {
+          item.classList.remove("active");
+        });
+
+        button.classList.add("active");
+        personalFilter = button.dataset.filter;
+        renderPersonalTasks();
+      });
+    });
+
+    // Calendar buttons
+    document.getElementById("previousMonth").addEventListener("click", () => {
+      calendarDate.setMonth(calendarDate.getMonth() - 1);
+      renderAll();
+    });
+
+    document.getElementById("nextMonth").addEventListener("click", () => {
+      calendarDate.setMonth(calendarDate.getMonth() + 1);
+      renderAll();
+    });
+
+    document.getElementById("previousMonth2").addEventListener("click", () => {
+      calendarDate.setMonth(calendarDate.getMonth() - 1);
+      renderAll();
+    });
+
+    document.getElementById("nextMonth2").addEventListener("click", () => {
+      calendarDate.setMonth(calendarDate.getMonth() + 1);
+      renderAll();
+    });
+
+    document.getElementById("quickAddButton").addEventListener("click", openDeadlineModal);
+
+    document.getElementById("notificationButton").addEventListener("click", () => {
+      const overdue = allTasks().filter(task => !task.completed && daysUntil(task.date) < 0);
+      const soon = allTasks().filter(task => !task.completed && daysUntil(task.date) >= 0 && daysUntil(task.date) <= 2);
+
+      if (overdue.length) {
+        showToast(`Bạn có ${overdue.length} công việc đã quá hạn.`);
+      } else if (soon.length) {
+        showToast(`Bạn có ${soon.length} công việc sắp đến hạn.`);
+      } else {
+        showToast("Hiện chưa có thông báo mới.");
+      }
+    });
+
+    document.querySelectorAll(".modal-backdrop").forEach(backdrop => {
+      backdrop.addEventListener("click", event => {
+        if (event.target === backdrop) {
+          backdrop.classList.remove("show");
+        }
+      });
+    });
+
+    renderAll();
+  </script>
+</body>
+</html>
